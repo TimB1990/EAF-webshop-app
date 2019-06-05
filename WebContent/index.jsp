@@ -13,7 +13,7 @@
 	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 	  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 	  <style>
-	  .categorie-info
+	  .info
 	  {
 			border-radius: 25px;
   		border: 2px solid #73AD21;
@@ -21,6 +21,41 @@
   		margin:10px;  
 	  	
 	  }
+	  
+	  .artikelBtn
+	  {
+	  	height:60px;
+	  	width: 120px;
+	  	color:white;
+	  	text-decoration: none;
+	  }
+	  
+	  .shoppingIcon
+	  {
+	  	color:white;
+	  	text-decoration: none;
+	  }
+	  
+	  .shoppingIcon:focus
+	  {
+	  	outline: none;
+	  	border: none;
+	  }
+	  
+	  .shop-item
+	  {
+	  	display:inline-block;
+	  	padding: 10px;
+	  	width:200px;
+	  }
+	  
+	  .glyphicon
+	  {
+	  	font-size:20px;
+	  	padding-left:4px;
+	  	padding-right:4px;
+	  }
+	  
 	  </style>
 	</head>
 	<body>
@@ -48,7 +83,20 @@
 		      </li>
 		      <li><a href="#">About</a></li>
 		      <li><a href="#">Contact</a></li>
-		      <li><a href="#">login</a></li>
+		      <!--  <li><a href="#">login</a></li> -->
+		    </ul>
+		    <ul class="nav navbar-nav navbar-right">
+		    	<li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login </a></li>
+		    	<li class="dropdown">
+		    		<a class="shoppingIcon dropdown-toggle" data-toggle="dropdown">
+		    			<span class="glyphicon glyphicon-shopping-cart"></span> <span class="badge"> 2</span>
+		    		</a>
+		    		<ul class="dropdown-menu">
+		          <li class="shop-item">205 productnaam <input style="width:40px" type="number" min="1"/></li>
+		          <li class="shop-item">205 productnaam <input style="width:40px" type="number" min="1"/></li>
+		        </ul>
+		    	</li>
+	      	
 		    </ul>
 		  </div>
 		</nav>
@@ -69,20 +117,42 @@
 			</c:if>
 			
 			<c:if test="${not empty requestScope.contentRoot and requestScope.contentRoot eq 'artikelen'}">
-			<div class="categorie-info">
+			<div class="info">
 			<h2>${requestScope.categorieProps[3]}</h2>
 			<p>categorie ID: ${requestScope.categorieProps[0]}</p>
 			<p>${requestScope.categorieProps[1]}</p>
 			<p>${requestScope.categorieProps[2]}</p>
 			</div>
-
+			
 			<c:forEach items="${requestScope.artikelList}" var="artikel">
 			<div class="well well-sm" style="border-radius:20px">
 			<h3>${artikel[1]}</h3>
 			<p>Artikelnummer: ${artikel[0]}</p>
 			<h3><span class="label label-default"> &#128; ${artikel[2]} </span></h3>
+			<h3><span><a href="/EAFwebshop/artikel/${artikel[0]}" class="artikelBtn label label-success">Artikel bekijken</a>
+			<a href="#" class="artikelBtn label label-default"> In winkelmandje <span class="glyphicon glyphicon-shopping-cart"></span></a></span></h3>
 			</div>
 			</c:forEach>
+			</c:if>
+			
+			<c:if test="${not empty requestScope.contentRoot and requestScope.contentRoot eq 'single-artikel'}">
+			<div class="info">
+			<h1>${requestScope.artikelProps[2]} <span style="float:right" class="label label label-success"> &#128; ${requestScope.artikelProps[4]}</span></h1>
+			</div>
+			
+			<div class="container-fluid info">
+				<div class="row">
+					<div class="col-sm-3">
+						<p>artikelnummer: ${requestScope.artikelProps[0]}</p>
+						<p>categorie id: ${requestScope.artikelProps[1]}</p>
+					</div>
+					<div class="col-sm-9">
+						<p>${requestScope.artikelProps[3]}</p>
+					</div>
+				</div>
+				<h3 style="float:right"><a href="#" class="artikelBtn label label-default"> Toevoegen aan winkelmandje <span class="glyphicon glyphicon-shopping-cart"></span></a></h3>
+			</div>
+
 			</c:if>
 			
 		</div>
