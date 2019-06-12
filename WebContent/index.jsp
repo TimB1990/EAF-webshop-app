@@ -24,7 +24,7 @@
 	  
 	  .artikelBtn
 	  {
-	  	height:60px;
+	  	height: 90px;
 	  	width: 120px;
 	  	color:white;
 	  	text-decoration: none;
@@ -46,11 +46,12 @@
 	  {
 	  	display:inline-block;
 	  	padding: 10px;
-	  	width:200px;
+	  	width:400px;
 	  }
 	  
 	  .glyphicon
 	  {
+	  	text-align: center;
 	  	font-size:20px;
 	  	padding-left:4px;
 	  	padding-right:4px;
@@ -89,11 +90,47 @@
 		    	<li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login </a></li>
 		    	<li class="dropdown">
 		    		<a class="shoppingIcon dropdown-toggle" data-toggle="dropdown">
-		    			<span class="glyphicon glyphicon-shopping-cart"></span> <span class="badge"> 2</span>
+		    			<span class="glyphicon glyphicon-shopping-cart"></span> 
+		    			<span class="badge">
+		    				<c:out value="${itemCount}"/>
+		    			</span>
 		    		</a>
+		    		<!-- shoopingbasket -->
 		    		<ul class="dropdown-menu">
-		          <li class="shop-item">205 productnaam <input style="width:40px" type="number" min="1"/></li>
-		          <li class="shop-item">205 productnaam <input style="width:40px" type="number" min="1"/></li>
+		          <table style="width:500px;padding:5px;margin:5px;" class="table table-striped">
+			          <thead>
+				          <tr>
+				          	<th>artikel</th>
+				          	<th>prijs</th>
+				          	<th>aantal</th>
+				          	<th>bedrag</th>
+				          </tr>
+			          </thead>
+			          <tbody>
+			          	<c:if test="${not empty sessionScope.cartItemList}">
+					          <c:forEach items="${sessionScope.cartItemList}" var="item">
+					          	<c:url value="/addToCart" var="deleteFromCart">
+				          			<c:param name="artikelnr" value="${item[0]}"/>
+			          				<c:param name="action" value="deleteFromCart"/>
+		          				</c:url>
+					          	<tr>
+					          		<td>${item[0]}: ${item[1]}</td>
+					          		<td>&#128; ${item[2]}</td>
+					          		<td>${item[3]}</td>
+					          		<td>&#128; ${item[4]}</td>
+					          		<td><a href="${deleteFromCart}" style="text-decoration: none;" class="glyphicon glyphicon-remove-circle"></a></td>
+					          	</tr>
+					          </c:forEach>
+				          </c:if>
+				          <c:if test="${itemCount eq '0'}">
+			          		<tr><td colspan="5"> Het winkelmandje bevat geen items </td></tr>
+			          	</c:if>
+				        </tbody>
+		          </table>
+		          <c:url value="/addToCart" var="emptyCart">
+		          	<c:param name="action" value="emptyCart"/>
+		          </c:url>
+		          <a href="${emptyCart}" class="btn">winkelmandje leeghalen</a>
 		        </ul>
 		    	</li>
 	      	
@@ -130,7 +167,11 @@
 			<p>Artikelnummer: ${artikel[0]}</p>
 			<h3><span class="label label-default"> &#128; ${artikel[2]} </span></h3>
 			<h3><span><a href="/EAFwebshop/artikel/${artikel[0]}" class="artikelBtn label label-success">Artikel bekijken</a>
-			<a href="#" class="artikelBtn label label-default"> In winkelmandje <span class="glyphicon glyphicon-shopping-cart"></span></a></span></h3>
+			<c:url value="/addToCart" var="addItem">
+					<c:param name="artikelnr" value="${artikel[0]}"/>
+					<c:param name="action" value="newItem"/>
+			</c:url>
+			<a href="${addItem}" class="artikelBtn label label-default"> In winkelmandje <span class="glyphicon glyphicon-shopping-cart"></span></a></span></h3>
 			</div>
 			</c:forEach>
 			</c:if>
@@ -140,17 +181,22 @@
 			<h1>${requestScope.artikelProps[2]} <span style="float:right" class="label label label-success"> &#128; ${requestScope.artikelProps[4]}</span></h1>
 			</div>
 			
+			
 			<div class="container-fluid info">
 				<div class="row">
 					<div class="col-sm-3">
-						<p>artikelnummer: ${requestScope.artikelProps[0]}</p>
-						<p>categorie id: ${requestScope.artikelProps[1]}</p>
+						<p>artikelnummer: ${artikelProps[0]}</p>
+						<p>categorie id: ${artikelProps[1]}</p>
 					</div>
 					<div class="col-sm-9">
-						<p>${requestScope.artikelProps[3]}</p>
+						<p>${artikelProps[3]}</p>
 					</div>
 				</div>
-				<h3 style="float:right"><a href="#" class="artikelBtn label label-default"> Toevoegen aan winkelmandje <span class="glyphicon glyphicon-shopping-cart"></span></a></h3>
+				<c:url value="/addToCart" var="addItem">
+					<c:param name="artikelnr" value="${artikelProps[0]}"/>
+					<c:param name="action" value="newItem"/>
+				</c:url>
+				<h3 style="float:right"><a href="${addItem}" class="artikelBtn label label-default"> Toevoegen aan winkelmandje <span class="glyphicon glyphicon-shopping-cart"></span></a></h3>
 			</div>
 
 			</c:if>
