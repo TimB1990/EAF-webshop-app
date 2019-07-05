@@ -1,8 +1,8 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-  pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>  
 <!DOCTYPE html>
+
 <html>
   <head>
     <title>EAF Home</title>
@@ -49,33 +49,19 @@
       padding-left:2px;
       padding-right:2px;
       }
-      .sign-minus
+      .sign-minus, .sign-plus
       {
       text-decoration: none;
       text-align: center;
-      font-family: "monospace";
       display: inline-block;
+      font-family: "monospace";
       color: black;
+      margin:3px;
+      width:16px;
       border: 1px solid black;
-      border-radius:0px 0px 6px 6px;
-      width:20px;
-      height:20px;
       background-color:white;
       }
   
-      .sign-plus
-      {
-      text-decoration: none;
-      text-align: center;
-      font-family: "monospace";
-      display: inline-block;
-      color: black;
-      border: 1px solid black;
-      border-radius:6px 6px 0px 0px;
-      width:20px;
-      height:20px;
-      background-color:white;
-      }
       .sign-plus:hover, .sign-minus:hover
       {
       text-decoration: none;
@@ -116,15 +102,18 @@
             </li>
             <li><a href="#">About</a></li>
             <li><a href="#">Contact</a></li>
-            <!--  <li><a href="#">login</a></li> -->
           </ul>
           <ul class="nav navbar-nav navbar-right">
+
           	<c:if test="${empty sessionScope.loggedIn or sessionScope.loggedIn eq 'false'}">
-            	<li><a href="${pageContext.request.contextPath}/login"><span class="glyphicon glyphicon-log-in"></span> Login </a></li>
+            	<li><a href="${pageContext.request.contextPath}/login"><span class="glyphicon glyphicon-log-in"></span> Log in </a></li>
             </c:if>
+            
             <c:if test="${not empty sessionScope.loggedIn and sessionScope.loggedIn eq 'true'}">
             	<li><a href="${pageContext.request.contextPath}/login"><span class="glyphicon glyphicon-user"></span> Mijn Profiel </a></li>
+            	<li><a href="${pageContext.request.contextPath}/login?logout=true"><span class="glyphicon glyphicon-log-out"></span> Log uit </a></li>
             </c:if>
+      
             <li class="dropdown">
               <a class="shoppingIcon dropdown-toggle" data-toggle="dropdown">
                 <span class="glyphicon glyphicon-shopping-cart"></span> 
@@ -132,7 +121,6 @@
                   <c:out value="${not empty itemCount ? itemCount : '0'}"/>
                 </span>
               </a>
-              <!-- shoopingbasket -->
               <ul class="dropdown-menu">
                 <li>
                   <table class="table table-striped">
@@ -140,6 +128,8 @@
                       <tr>
                       	<th>nr.</th>
                         <th>artikel</th>
+                        <th>gewicht</th>
+                        <th>btw</th>
                         <th>artikelprijs</th>
                         <th>aantal</th>
                         <th>bedrag</th>
@@ -155,33 +145,29 @@
                           <tr>
                           	<td>${item[0]}</td>
                             <td>${item[1]}</td>
-                            <td>&#128; ${item[2]}</td>
-                            <td>
-                              <c:url value="/addToCart" var="decr">
-                                <c:param name="artikelnr" value="${item[0]}"/>
-                                <c:param name="action" value="decrease"/>
-                              </c:url>
-                              
-                              <c:url value="/addToCart" var="incr">
-                                <c:param name="artikelnr" value="${item[0]}"/>
-                                <c:param name="action" value="increase"/>
-                              </c:url>
-                              
-                              <div class="container-fluid">
-                              	<a class="sign-plus" href="${incr}">+</a>
-                              	<span style="text-align:center; display:block;">${item[3]}</span>
-                              	<a class="sign-minus" href="${decr}">-</a>                              	
-                              </div>
-                              
-                            </td>
+                            <td>${item[2]} gram</td>
+                            <td>${item[3]} %</td>
                             <td>&#128; ${item[4]}</td>
-                            <td><a href="${deleteFromCart}" style="text-decoration: none;" class="glyphicon glyphicon-remove-circle"></a></td>
+                             <c:url value="/addToCart" var="decr">
+                               <c:param name="artikelnr" value="${item[0]}"/>
+                               <c:param name="action" value="decrease"/>
+                             </c:url>
+                              
+                             <c:url value="/addToCart" var="incr">
+                               <c:param name="artikelnr" value="${item[0]}"/>
+                               <c:param name="action" value="increase"/>
+                            </c:url>
+                            <td>
+                              <a class="sign-plus" href="${incr}">+</a>${item[5]}<a class="sign-minus" href="${decr}">-</a>   	                              	 
+                            </td>
+                            <td>&#128; ${item[6]}</td>
+                            <td><a href="${deleteFromCart}" style="text-decoration: none;"> X </a></td>
                           </tr>
                         </c:forEach>
                       </c:if>
                       <c:if test="${itemCount eq '0'}">
                         <tr>
-                          <td colspan="5"> Het winkelmandje bevat geen items </td>
+                          <td colspan="7"> Het winkelmandje bevat geen items </td>
                         </tr>
                       </c:if>
                       <tr>
@@ -196,7 +182,7 @@
                   <c:param name="action" value="emptyCart"/>
                 </c:url>
                 <li><a href="${emptyCart}" style="margin:10px;" class="btn btn-default">Winkelmandje leeghalen</a></li>
-                <li><a href="#" style="margin:10px;" class="btn btn-success">Besteloverzicht</a></li>
+                <li><a href="${pageContext.request.contextPath}/newOrder" style="margin:10px;" class="btn btn-success">Besteloverzicht</a></li>
               </ul>
             </li>
           </ul>
@@ -209,6 +195,7 @@
       , Content: 
       <c:out value="${requestScope.contentRoot}"/>
     </div>
+    
     <div class="container">
       <c:if test="${not empty requestScope.contentRoot and requestScope.contentRoot eq 'berichten'}">
         <c:forEach items="${requestScope.berichtList}" var="bericht">
@@ -230,6 +217,7 @@
           <div class="well well-sm" style="border-radius:20px">
             <h3>${artikel[1]}</h3>
             <p>Artikelnummer: ${artikel[0]}</p>
+            <p>Gewicht: ${artikel[3]} gram</p>
             <h3><span class="label label-default"> &#128; ${artikel[2]} </span></h3>
             <h3>
               <span>
@@ -253,6 +241,8 @@
             <div class="col-sm-3">
               <p>artikelnummer: ${artikelProps[0]}</p>
               <p>categorie id: ${artikelProps[1]}</p>
+              <p>gewicht: ${artikelProps[5]} gram</p>
+              <p>BTW: ${artikelProps[6]} %</p>
             </div>
             <div class="col-sm-9">
               <p>${artikelProps[3]}</p>
@@ -293,7 +283,7 @@
       
       <c:if test="${not empty requestScope.contentRoot and requestScope.contentRoot eq 'profiel'}">
 	      <div class="row">
-	      	<div class="col-md-6 col-sm-12">
+	      	<div class="col-md-4 col-sm-12">
 	      		<table class="table table-bordered">
 		      		<tr><th colspan="2">Mijn gegevens</th></tr>
 		      		<tr><td>Klantnummer</td><td>${profielDataList.get(0)}</td></tr>
@@ -304,20 +294,137 @@
 		      		<tr><td>Huisnummer</td><td>${profielDataList.get(5)}</td></tr>
 		      		<tr><td>Postcode</td><td>${profielDataList.get(6)}</td></tr>
 		      		<tr><td>Woonplaats</td><td>${profielDataList.get(7)}</td></tr>
-		      		<tr><td colspan="2"><a href="#" style="width:100%" class="btn btn-primary">Wijzig gegevens</a></td></tr>
-		      		<tr><td colspan="2"><a href="#" style="width:100%" class="btn btn-primary">Wijzig wachtwoord</a></td></tr>
 	      		</table>
+	      		<p><a href="#" class="btn btn-success">Wijzig gegevens</a></p>
+		      	<p><a href="#" class="btn btn-success">Wijzig wachtwoord</a></p>
 	      	</div>
-	      	<div class="col-md-6 col-sm-12">
+	      	<div class="col-md-4 col-sm-12">
 	      	<table class="table table-bordered">
-	      	<tr><th>Mijn Bestellingen</th></tr>
-	      	<tr><td>* bestelling 1</td></tr>
-	      	<tr><td>* bestelling 2</td></tr>
+	      	<tr><th colspan="5">Mijn Bestellingen</th></tr>
+	      	<tr>
+		      	<th>#nr</th>
+		      	<th>Besteldatum</th>
+		      	<th>Bedrag</th>
+		      	<th>Status</th>
+		      	<th style="text-align:center;">Order</th>
+		      </tr>
+	      	<c:forEach items="${sessionScope.customerOrderList}" var="customerOrder">
+	      		<tr>
+	      			<td>${customerOrder[0]}</td>
+	      			<td>${customerOrder[1]}</td>
+	      			<td>&#128; ${customerOrder[2]}</td>
+	      			<td>${customerOrder[3]}</td>
+	      			<td style="text-align:center;"><a href="${pageContext.request.contextPath}/order/${customerOrder[0]}" class="btn btn-success"><span class="glyphicon glyphicon-eye-open"></span></a></td>
+	      		</tr>
+	      	</c:forEach>
 	      	</table>
 	      	</div>
 	      </div>
       </c:if>
-        
+      
+      <c:if test="${not empty requestScope.contentRoot and requestScope.contentRoot eq 'order'}">
+	      <div>
+	      	<table class="table table-bordered">
+	      		<tr><td colspan ="9">Order nr: ${bestelnr}</td></tr>
+	      		<tr>
+		      		<th>artikelnr</th>
+		      		<th>productnaam</th>
+		      		<th>prijs</th>
+		      		<th>aantal</th>
+		      		<th>gewicht</th>
+		      		<th>totaalgewicht</th>
+		      		<th>BTW</th>
+		      		<th>bedragExBTW</th>
+		      		<th>bedrag</th>
+	      		</tr>
+	      		<c:forEach items="${orderArtikelList}" var="orderArtikel">
+	      			<tr>
+		      			<td>${orderArtikel[0]}</td>
+		      			<td>${orderArtikel[1]}</td>
+		      			<td>&#128; ${orderArtikel[2]}</td>
+		      			<td>${orderArtikel[3]}</td>
+		      			<td>${orderArtikel[4]} gram</td>
+		      			<td>${orderArtikel[5]} gram</td>
+		      			<td>${orderArtikel[6]} %</td>
+		      			<td>&#128; ${orderArtikel[7]}</td>
+		      			<td>&#128; ${orderArtikel[8]}</td>
+	      			</tr>
+	      		</c:forEach>
+	      	</table>
+	      	
+	      	<table class="table table-bordered">
+	      		<tr><td>Aantal Artikelen: </td><td>${requestScope.costSpecificationList.get(0)}</td></tr>
+	      	  <tr><td>Totaal bedrag ex BTW: </td><td> &#128; ${costSpecificationList.get(1)}</td></tr>
+	      		<tr><td>BTW (9,0%): </td><td> &#128; ${costSpecificationList.get(2)} </td></tr>
+	      		<tr><td>BTW (21,0%): </td><td> &#128; ${costSpecificationList.get(3)} </td></tr>
+	      		<tr><td>Totaal bedrag inc. BTW</td><td> &#128; ${costSpecificationList.get(4)} </td></tr>
+	      		<tr><td>Ordergewicht: </td><td>${costSpecificationList.get(5)} kg</td></tr>
+	      		<tr><td>Aantal paketten: </td><td>${costSpecificationList.get(6)}</td></tr>
+	      		<tr><td>Verzendkosten inc. btw: </td><td> &#128; ${costSpecificationList.get(7)} </td></tr>
+	      		<tr style="font-size:16px;"><td><b>Totaal inclusief verzendkosten: </b></td><td><b>&#128; ${costSpecificationList.get(8)}</b></td></tr>
+	      	</table>
+	      	<p><a href="${pageContext.request.contextPath}/login">Terug naar Mijn Profiel</a></p>
+	      </div>
+      </c:if>
+      
+      <c:if test="${not empty requestScope.contentRoot and requestScope.contentRoot eq 'newOrder'}">
+	      <div>
+				   <table class="table table-bordered">
+				   		<tr style="background-color:#5cb85c;font-size:16px;color:white;"><td colspan="10"><b>Mijn Winkelmandje</b></td></tr>
+				      <tr>
+				         <th>#nr</th>
+				         <th>product</th>
+				         <th>aantal</th>
+				         <th>prijs per stuk</th>
+				         <th>stukgewicht</th>
+				         <th>totaalgewicht</th>
+				         <th>bedrag ex. BTW</th>
+				         <th>BTW (9%)</th>
+				         <th>BTW (21%)</th>
+				         <th>bedrag inc. BTW</th>
+				      </tr>
+				      <c:forEach items="${orderArtikelDetailList}" var="artikelItem">
+				         <tr>
+				            <td>${artikelItem[0]}</td>
+				            <td>${artikelItem[1]}</td>
+				            <td>${artikelItem[2]} stuks</td>
+				            <td>&#128; ${artikelItem[3]}</td>
+				            <td>${artikelItem[4]} gram</td>
+				            <td>${artikelItem[5]} kg</td>
+				            <td>&#128; ${artikelItem[6]}</td>
+				            <td>&#128; ${artikelItem[7]}</td>
+				            <td>&#128; ${artikelItem[8]}</td>
+				            <td>&#128; ${artikelItem[9]}</td>
+				         </tr>
+				      </c:forEach>
+				   </table>
+				</div>
+				<div>
+			   <table class="table table-bordered">
+			   		<tr style="background-color:#5cb85c;font-size:16px;color:white;"><td colspan="8"><b>Mijn Order Specificatie</b></td></tr>
+			      <tr>
+			         <th>Aantal Artikelen</th>
+			         <th>Totaalbedrag ex. BTW</th>
+			         <th>BTW totaal (9%)</th>
+			         <th>BTW totaal (21%)</th>
+			         <th>Ordergewicht</th>
+			         <th>Aantal Paketten</th>
+			         <th>Verzendkosten inc. btw</th>
+			         <th>Totaalbedrag inc. Verzendkosten</th>
+			      </tr>
+			      <tr>
+			         <td>${totalOrderSpecification[0]} artikelen</td>
+			         <td>&#128; ${totalOrderSpecification[1]}</td>
+			         <td>&#128; ${totalOrderSpecification[2]}</td>
+			         <td>&#128; ${totalOrderSpecification[3]}</td>
+			         <td>${totalOrderSpecification[4]} kg</td>
+			         <td>${totalOrderSpecification[5]}</td>
+			         <td>&#128; ${totalOrderSpecification[6]}</td>
+			         <td><b style="font-size:16px;">&#128; ${totalOrderSpecification[7]}</b></td>
+			      </tr>
+			   </table>
+				</div>
+      </c:if>   
     </div>
   </body>
 </html>

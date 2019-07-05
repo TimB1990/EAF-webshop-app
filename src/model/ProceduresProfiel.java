@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 
+import Utility.DBconnect;
+
 public class ProceduresProfiel {
 	
 	public static List<String>read(String user, String password) throws ClassNotFoundException, SQLException{

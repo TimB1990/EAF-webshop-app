@@ -1,10 +1,11 @@
 package model;
 import java.util.*;
+
+import Utility.DBconnect;
+
 import java.sql.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-
-import model.DBconnect;
 
 public class ProceduresArtikel {
 	public static List<String[]> list(String categoryName) throws ClassNotFoundException, SQLException{
@@ -24,8 +25,9 @@ public class ProceduresArtikel {
 			DecimalFormat decimalFormatter = (DecimalFormat) numberFormatter;
 			decimalFormatter.applyPattern(pricePattern);
 			String prijs = decimalFormatter.format(rs.getDouble("prijs"));
+			String gewicht = "" + rs.getInt("gewicht");
 
-			String[]array = {artikelnr, productnaam, prijs};
+			String[]array = {artikelnr, productnaam, prijs, gewicht};
 			artikelList.add(array);
 			
 		}
@@ -34,7 +36,7 @@ public class ProceduresArtikel {
 	}
 	
 	public static String[]read(Integer nr) throws ClassNotFoundException, SQLException{
-		String[]artikel = new String[5];
+		String[]artikel = new String[7];
 		Connection conn = DBconnect.getConnection();
 		Statement stmt = conn.createStatement();
 		String sql = "call read_artikel('" + nr + "')";
@@ -52,6 +54,8 @@ public class ProceduresArtikel {
 			DecimalFormat decimalFormatter = (DecimalFormat) numberFormatter;
 			decimalFormatter.applyPattern(pricePattern);
 			String prijs = decimalFormatter.format(rs.getDouble("prijs"));
+			String BTW = "" + rs.getInt("btw");
+			String gewicht = "" + rs.getInt("gewicht");
 
 			//String[]array = {artikelnr, categorieID, productnaam, productomschrijving, prijs};
 			artikel[0] = artikelnr;
@@ -59,6 +63,8 @@ public class ProceduresArtikel {
 			artikel[2] = productnaam;
 			artikel[3] = productomschrijving;
 			artikel[4] = prijs;
+			artikel[5] = gewicht;
+			artikel[6] = BTW;
 		}
 		conn.close();
 		return artikel;

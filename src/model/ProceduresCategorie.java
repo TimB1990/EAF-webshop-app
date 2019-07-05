@@ -1,7 +1,9 @@
 package model;
 import java.util.*;
+
+import Utility.DBconnect;
+
 import java.sql.*;
-import model.DBconnect;
 
 public class ProceduresCategorie {
 	public static List<String[]> listCategorie() throws ClassNotFoundException, SQLException{

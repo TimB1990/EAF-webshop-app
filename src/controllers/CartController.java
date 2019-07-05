@@ -69,7 +69,7 @@ public class CartController extends HttpServlet {
 		if(action != null && action.equals("newItem")) {
 			
 			int artikelnr = Integer.parseInt(paramArtikelnr);
-			String[]cartItem = new String[5];
+			String[]cartItem = new String[7];
 			//int aantal = 1;
 			Boolean update = false;
 
@@ -101,15 +101,19 @@ public class CartController extends HttpServlet {
 					String artikelnrString = productData[0];
 					String productnaam = productData[2];
 					String prijs = productData[4];
+					String gewicht = productData[5];
+					String btw = productData[6];
 					
 					Double bedrag = Double.parseDouble(prijs.replace(',', '.')) * aantal;
 					String bedragString = decimalFormatter.format(bedrag);
 					
 					cartItem[0] = artikelnrString;
 					cartItem[1] = productnaam;
-					cartItem[2] = "" + prijs;
-					cartItem[3] = "" + aantal;
-					cartItem[4] = bedragString;
+					cartItem[2] = gewicht;
+					cartItem[3] = btw;
+					cartItem[4] = "" + prijs;
+					cartItem[5] = "" + aantal;
+					cartItem[6] = bedragString;
 					
 					cartItemList.add(cartItem);
 					itemCount = cartItemList.size();
@@ -129,27 +133,27 @@ public class CartController extends HttpServlet {
 			for (int i = 0; i<cartItemList.size(); i++) {
 				if(cartItemList.get(i)[0].equals(paramArtikelnr)) {
 					
-					aantal = Integer.parseInt(cartItemList.get(i)[3]);
+					aantal = Integer.parseInt(cartItemList.get(i)[5]);
 				
 					/*update aantal*/
 					if(action.contentEquals("increase")) {
-						aantal = Integer.parseInt(cartItemList.get(i)[3]) + 1;
+						aantal = Integer.parseInt(cartItemList.get(i)[5]) + 1;
 					}
 					
 					if(action.contentEquals("decrease")) {
 						if(aantal > 1) {
-							aantal = Integer.parseInt(cartItemList.get(i)[3]) - 1;
+							aantal = Integer.parseInt(cartItemList.get(i)[5]) - 1;
 						}	
 					}
 
-					cartItemList.get(i)[3] = "" + aantal;
+					cartItemList.get(i)[5] = "" + aantal;
 					
 					/*parse double bedrag */
-					Double updatedBedrag = Double.parseDouble(cartItemList.get(i)[2].replace(',', '.')) * aantal;
+					Double updatedBedrag = Double.parseDouble(cartItemList.get(i)[4].replace(',', '.')) * aantal;
 					String updatedBedragString = decimalFormatter.format(updatedBedrag);
 					
 					/*update bedrag*/
-					cartItemList.get(i)[4] = updatedBedragString;
+					cartItemList.get(i)[6] = updatedBedragString;
 							
 				}
 			}
@@ -167,7 +171,7 @@ public class CartController extends HttpServlet {
 		}
 		
 		for(int i = 0; i<cartItemList.size(); i++) {
-			totaal += Double.parseDouble(cartItemList.get(i)[4].replace(',', '.'));
+			totaal += Double.parseDouble(cartItemList.get(i)[6].replace(',', '.'));
 		}
 		
 		

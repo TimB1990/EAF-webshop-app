@@ -1,9 +1,10 @@
 package model;
 import java.util.*;
+
+import Utility.DBconnect;
+
 import java.sql.*;
 import java.text.SimpleDateFormat;
-
-import model.DBconnect;
 
 public class ProceduresBericht {
 	public static List<String[]> listBericht() throws ClassNotFoundException, SQLException{
