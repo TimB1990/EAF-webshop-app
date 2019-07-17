@@ -27,8 +27,8 @@ public class ProceduresOrders {
 		Statement stmt = conn.createStatement();
 		String sql = "call create_bestelnr()";
 		ResultSet rs = stmt.executeQuery(sql);
-		while(rs.next()) {
-			bestelnr += rs.getInt(0);
+		if(rs.next()) {
+			bestelnr += rs.getInt(1);
 		}
 		
 		conn.close();
@@ -43,6 +43,7 @@ public class ProceduresOrders {
 		stmt.setInt(3,bestelnr);
 	
 		stmt.executeUpdate();
+		conn.close();
 		
 	}
 	

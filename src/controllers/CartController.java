@@ -78,15 +78,15 @@ public class CartController extends HttpServlet {
 				if(cartItemList.get(i)[0].equals(paramArtikelnr)) {
 					
 					/*update aantal*/
-					aantal = Integer.parseInt(cartItemList.get(i)[3]) + 1;
-					cartItemList.get(i)[3] = "" + aantal;
+					aantal = Integer.parseInt(cartItemList.get(i)[5]) + 1;
+					cartItemList.get(i)[5] = "" + aantal;
 					
 					/*parse double bedrag */
-					Double updatedBedrag = Double.parseDouble(cartItemList.get(i)[2].replace(',', '.')) * aantal;
+					Double updatedBedrag = Double.parseDouble(cartItemList.get(i)[4].replace(',', '.')) * aantal;
 					String updatedBedragString = decimalFormatter.format(updatedBedrag);
 					
 					/*update bedrag*/
-					cartItemList.get(i)[4] = updatedBedragString;
+					cartItemList.get(i)[6] = updatedBedragString;
 					
 					/*set updateBoolean to true*/
 					update = true;			
@@ -153,7 +153,7 @@ public class CartController extends HttpServlet {
 					String updatedBedragString = decimalFormatter.format(updatedBedrag);
 					
 					/*update bedrag*/
-					cartItemList.get(i)[6] = updatedBedragString;
+					cartItemList.get(i)[6] = updatedBedragString; 
 							
 				}
 			}
