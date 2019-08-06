@@ -35,34 +35,59 @@ public class ProcessOrderController extends HttpServlet {
 	{
 		try {
 			
+			//get the session object from request.
 			HttpSession session = request.getSession();
+			
+			//get attribute profielDataList from sessionScope.
 			List<String>profielDataList = (List<String>) session.getAttribute("profielDataList");
+			
+			//get stored klantnr from the first index of profielDataList
 			int klantnr = Integer.parseInt(profielDataList.get(0));
-			int bestelnr = ProceduresOrders.createBestelnr();
+			
+			//get a new bestelnr by calling createBestelnr-method parsing in the request object. 
+			int bestelnr = ProceduresOrders.createBestelnr(request);
 
+			//get list-object of string arrays containing the details of the articles beeing ordered from sessionScope.
 			List<String[]>orderArtikelDetailList = (List<String[]>) session.getAttribute("orderArtikelDetailList");
 			
+			//do 'for' loop over orderArtikelDetailList
 			for(int i = 0; i < orderArtikelDetailList.size(); i++) {
 				
+				//retrieve artikelnr from first arrayindex of current list-index beeing looped over. 
 				int artikelnr = Integer.parseInt(orderArtikelDetailList.get(i)[0]);
+				
+				//retrieve aantal (amount of the product ordered) from third arrayindex of current list-index beeing looped over.
 				int aantal = Integer.parseInt(orderArtikelDetailList.get(i)[2]);
-				ProceduresOrders.insertIntoBesteld(artikelnr, aantal, bestelnr);
+				
+				//insert artikelnr, aantal and bestelnr in table 'besteld' containing each artikelnr beeing ordered and the amount of that article. 
+				ProceduresOrders.insertIntoBesteld(request,artikelnr, aantal, bestelnr);
 			}
 			
-			ProceduresOrders.insertIntoBestellingen(bestelnr, klantnr);
+			//call insertIntoBestelling procedure parsing in request-object, bestelnr and klantnr, to insert order into database.
+			ProceduresOrders.insertIntoBestellingen(request,bestelnr, klantnr);
+			
+			//set message to 'bestelling succesvol' and set boolean success to true
 			message = "Bestelling succesvol";
 			success = true;
+			
+			//set success as request attribute
 			request.setAttribute("success", success);
+			
+			//define content as 'orderProcessed'. 
 			contentRoot = "orderProcessed";	
 		}
 		catch (ClassNotFoundException | SQLException e) {
+			
+			//In case of an exception, show message and display error.
 			message = "plaatsen bestelling mislukt..." + e;
 			e.printStackTrace();
 		}
 		
+		//set attributes contentRoot and message.
 		request.setAttribute("message", message);
 		request.setAttribute("contentRoot", contentRoot);
 		
+		//forward request to index.jsp so that request scope can be accessed from within index.jsp.
 		RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
 		rd.forward(request, response);
 		

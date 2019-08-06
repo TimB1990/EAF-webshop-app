@@ -5,18 +5,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 public class Encrypt {
-	
-	String passwordToHash;
-	String securePassword;
-	
-	public Encrypt(String passwordToHash) throws NoSuchAlgorithmException {
-		this.passwordToHash = passwordToHash;
-		byte[] salt = getSalt();
-		securePassword = get_SHA_256_SecurePassword(passwordToHash, salt);
-	}
-	
-	
-	private static String get_SHA_256_SecurePassword(String passwordToHash, byte[] salt)
+
+	public static String get_SHA_256_SecurePassword(String passwordToHash, byte[] salt)
     {
         String generatedPassword = null;
         try {
@@ -37,8 +27,8 @@ public class Encrypt {
         return generatedPassword;
     }
 	
-	//Add salt
-    private static byte[] getSalt() throws NoSuchAlgorithmException
+	
+    public static byte[] generateSalt() throws NoSuchAlgorithmException
     {
         SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
         byte[] salt = new byte[16];

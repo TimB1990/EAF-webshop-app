@@ -31,29 +31,50 @@ public class LoginController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		//get session-object from request
 		loginSession = request.getSession();
 
+		//get attribute 'loggedIn' from sessionscope
 		loggedIn = (String) request.getSession().getAttribute("loggedIn");
 
+		//check whether loggedIn is null or loggedIn equals false.
 		if (loggedIn == null || loggedIn.contentEquals("false")) {
+			
+			//set content to 'loginForm' and set message to 'log alstublieft in'
 			contentRoot = "loginForm";
 			message = "log alstublieft in";
+			
 		} else {
-
+			
+			//otherwise set content to 'profiel' and set message to 'login succesvol'
 			contentRoot = "profiel";
 			message = "login succesvol";
 		}
 
+		//check if parameter 'logout' is not null and parameter 'logout' has value "true'.
 		if (request.getParameter("logout") != null && request.getParameter("logout").contentEquals("true")) {
+			
+			//set value of loggedIn to 'false'
 			loggedIn = "false";
+			
+			//reset 'loggedIn' session-attribute.
 			loginSession.setAttribute("loggedIn", loggedIn);
+			
+			//create String-array object to put "guest" as 
+			String[]credentials = {"guest","guest"};
+			loginSession.setAttribute("credentials",credentials);
+		
+			//set contentRoot to 'loginForm' and message to 'uitloggen succesvol'
 			contentRoot = "loginForm";
 			message = "uitloggen succesvol";
 
 		}
 
+		//set attributes 'contentRoot' and 'message' into request-scope.
 		request.setAttribute("contentRoot", contentRoot);
 		request.setAttribute("message", message);
+		
+		//forward request to index.jsp so that request scope can be accessed from within index.jsp.
 		RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
 		rd.forward(request, response);
 
@@ -69,7 +90,7 @@ public class LoginController extends HttpServlet {
 		String pw = request.getParameter("pw");
 
 		try {
-			List<String> profielDataList = ProceduresProfiel.read(user, pw);
+			List<String> profielDataList = ProceduresProfiel.read(request, user, pw);
 
 			if (profielDataList.get(0).contentEquals("NotFound")) {
 				errMsg = "De opgegeven combinatie van gebruikersnaam en wachtwoord is onjuist!";
@@ -80,10 +101,12 @@ public class LoginController extends HttpServlet {
 				loggedIn = "true";
 				message = "login succesvol";
 				contentRoot = "profiel";
-
+				
+				String[]credentials = {user,pw};
+				loginSession.setAttribute("credentials",credentials);
 				loginSession.setAttribute("profielDataList", profielDataList);
 				String klantnr = profielDataList.get(0);
-				List<String[]> customerOrderList = ProceduresOrders.listCustomerOrders(klantnr);
+				List<String[]> customerOrderList = ProceduresOrders.listCustomerOrders(request,klantnr);
 				loginSession.setAttribute("customerOrderList", customerOrderList);
 			}
 

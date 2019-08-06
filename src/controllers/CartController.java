@@ -46,30 +46,47 @@ public class CartController extends HttpServlet {
 		
 		/*create cartSession*/
 		HttpSession cartSession = request.getSession(true);
+		
+		//create list of string-arrays to represent cartitem list.
 		List<String[]>cartItemList = new ArrayList<String[]>();
 		
+		//check if the cartItemList attribute is present in sessionscope
 		if(cartSession.getAttribute("cartItemList") != null) {
+			
+			//retrieve cartItemList from sessionscope
 			cartItemList = (List<String[]>) cartSession.getAttribute("cartItemList");
+			
+			//set itemCount equal to the size of cartItemList
 			itemCount = cartItemList.size();
 		}
 		else {
+			//other set cartItemList to new list of string arrays.
 			cartItemList = new ArrayList<String[]>();
 		}
 		
+		//check is parameter 'action' has value 'emptyCart'
 		if(action != null && action.equals("emptyCart")) {
+			
+			//us a Iterator to iterate over whole cartItemList
 			for (Iterator<String[]> iter = cartItemList.listIterator(); iter.hasNext(); ) {
 				@SuppressWarnings("unused")
 				String[] arr = iter.next();
+				
+				//remove list index
 			    iter.remove();
 			}
+			
+			//set itemcount to 0
 			itemCount = 0;
 		}
 		
-			
+		//check whether action parameter has value 'newItem'	
 		if(action != null && action.equals("newItem")) {
 			
+			//set artikelnr from given artikelnr parameter.
 			int artikelnr = Integer.parseInt(paramArtikelnr);
 			String[]cartItem = new String[7];
+			
 			//int aantal = 1;
 			Boolean update = false;
 
@@ -93,10 +110,12 @@ public class CartController extends HttpServlet {
 				}
 			}
 			
+			//if updateBoolean is false
 			if(!update) {
 				try {
 					
-					String[]productData = ProceduresArtikel.read(artikelnr);
+					//get data from artikelnr via database
+					String[]productData = ProceduresArtikel.read(request,artikelnr);
 					
 					String artikelnrString = productData[0];
 					String productnaam = productData[2];
@@ -107,6 +126,7 @@ public class CartController extends HttpServlet {
 					Double bedrag = Double.parseDouble(prijs.replace(',', '.')) * aantal;
 					String bedragString = decimalFormatter.format(bedrag);
 					
+					//put data into cartItem array
 					cartItem[0] = artikelnrString;
 					cartItem[1] = productnaam;
 					cartItem[2] = gewicht;
@@ -120,19 +140,23 @@ public class CartController extends HttpServlet {
 		
 				}
 				catch (ClassNotFoundException | SQLException e) {
+					//if an error occurs, print error.
 					e.printStackTrace();		
 				}	
 				
 			}
 		}
 		
+		//if given parameter for artikelnr is not null and parameter action is not null.
 		if(paramArtikelnr != null && action != null) {
 			
-			//must be placed inside the for loop so other condition, that aantal must be bigger than 1
-			
+			//loop over cartItemList
 			for (int i = 0; i<cartItemList.size(); i++) {
+				
+				//check if the first array-index of current list-index equals the given parameter for artikelnr
 				if(cartItemList.get(i)[0].equals(paramArtikelnr)) {
 					
+					//get amount of current product on cartItemList. 
 					aantal = Integer.parseInt(cartItemList.get(i)[5]);
 				
 					/*update aantal*/
@@ -146,9 +170,10 @@ public class CartController extends HttpServlet {
 						}	
 					}
 
+					//set 5th array index of current list-index to empty string + new aantal/
 					cartItemList.get(i)[5] = "" + aantal;
 					
-					/*parse double bedrag */
+					/*get and parse double bedrag */
 					Double updatedBedrag = Double.parseDouble(cartItemList.get(i)[4].replace(',', '.')) * aantal;
 					String updatedBedragString = decimalFormatter.format(updatedBedrag);
 					
@@ -156,27 +181,43 @@ public class CartController extends HttpServlet {
 					cartItemList.get(i)[6] = updatedBedragString; 
 							
 				}
+				
 			}
 		}
 		
+		//check if parameters 'paramArtikelNr' and 'deleteFromCart' are given from index.jsp
 		if(paramArtikelnr != null && action != null && action.equals("deleteFromCart")) {
+			
+			//iterate over cartItemList
 			for (Iterator<String[]> iter = cartItemList.listIterator(); iter.hasNext(); ) {
+				
+				//set string[] object item to next iteration of cartItemList
 				String[] item = iter.next();
+				
+				//check if first arrayindex of item equals value of given artikelnr (paramArtikelnr)
 				if(item[0].equals(paramArtikelnr)) {
+				
+					//remove the object (string[]) from cartItemList beeing iterated. 
 					iter.remove();
+					
+					//decrease itemcount by one
 					itemCount--;
 				}	    
 			}
 
 		}
 		
+		//loop over cartItemList
 		for(int i = 0; i<cartItemList.size(); i++) {
+			
+			//increase totaal by the 6th array-index of current list-index and make sure ',' is replaced by '.' so String can be parsed to Double.
 			totaal += Double.parseDouble(cartItemList.get(i)[6].replace(',', '.'));
 		}
 		
-		
+		//create string-object to represent 'totaal' which is given a Double.
 		totaalString = decimalFormatter.format(totaal);
 
+		//set attributes 'itemCount', 'totaal' and 'cartItemList' to sessionScope 
 		cartSession.setAttribute("itemCount", itemCount);
 		cartSession.setAttribute("totaal", totaalString);
 		cartSession.setAttribute("cartItemList", cartItemList);

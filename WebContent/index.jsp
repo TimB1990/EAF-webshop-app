@@ -17,7 +17,7 @@
   </head>
   <body>
   
-    <c:if test="${empty requestScope.message}">
+    <c:if test="${empty message}">
       <c:redirect url="/index" />
     </c:if>
     
@@ -59,16 +59,16 @@
           <c:if
             test="${not empty sessionScope.loggedIn and sessionScope.loggedIn eq 'true'}">
             <li><a href="${pageContext.request.contextPath}/profiel"><span
-              class="glyphicon glyphicon-user"></span> Mijn Profiel </a></li>
+              class="glyphicon glyphicon-user"></span> ${profielDataList.get(2)} ${profielDataList.get(3)} </a></li>
             <li><a
               href="${pageContext.request.contextPath}/profiel?logout=true"><span
               class="glyphicon glyphicon-log-out"></span> Log uit </a></li>
           </c:if>
           
           <li>
-            <a class="shoppingIcon dropdown-toggle">
+            <a id="shoppingBasket">
               <span
-                class="glyphicon glyphicon-shopping-cart"></span> 
+                class="glyphicon glyphicon-shopping-cart" style="transform: scale(1.2)"></span> 
               <span
                 class="badge">
                 <c:out
@@ -82,15 +82,15 @@
     </div>
 
 		<div id="sitecontent" class="row" style="padding:10px;margin:10px;">
-	    <div id="content" class="col-md-8">
+	    <div id="content" class="col-md-8 col-sm-12 col-xs-12">
 	    	<div class="alert alert-info">
 	      	<strong>Message: </strong>
-	      	<c:out value="${requestScope.message}" />, Content:
-	      	<c:out value="${requestScope.contentRoot}" />
+	      	<c:out value="${message}" />, Content:
+	      	<c:out value="${contentRoot}" />
 	    	</div>
 	      <c:if
-	        test="${not empty requestScope.contentRoot and requestScope.contentRoot eq 'berichten'}">
-	        <c:forEach items="${requestScope.berichtList}" var="bericht">
+	        test="${not empty contentRoot and contentRoot eq 'berichten'}">
+	        <c:forEach items="${berichtList}" var="bericht">
 	          <div class="well" style="border-radius: 20px">
 	            <h2>${bericht[1]}</h2>
 	            <p>${bericht[2]}</p>
@@ -100,45 +100,45 @@
 	      </c:if>
 	      
 	      <c:if
-	        test="${not empty requestScope.contentRoot and requestScope.contentRoot eq 'artikelen'}">
-	        <div class="info">
-	          <h2>${requestScope.categorieProps[3]}</h2>
-	          <p>categorie ID: ${requestScope.categorieProps[0]}</p>
-	          <p>${requestScope.categorieProps[1]}</p>
-	          <p>${requestScope.categorieProps[2]}</p>
+	        test="${not empty contentRoot and contentRoot eq 'artikelen'}">
+	        <div class="row" style="margin:15px;">
+	        
+	        	<div class="col-sm-12 col-xs-12 col-md-5">
+		          <p style="font-size:30px;"><b>${categorieProps[0]}: ${categorieProps[3]}</b></p>
+		          <p style="font-size:18px;">${categorieProps[1]}</p>
+	          </div>
+	          <div style="float:right;" class="col-sm-12 col-xs-12 col-md-3">
+	          	<img style="border-radius:20px;" src="../images/${categorieProps[2]}" alt="${categorieProps[2]}" width="256", height="256">
+	          </div>
 	        </div>
-	        <c:forEach items="${requestScope.artikelList}" var="artikel">
+	        <c:forEach items="${artikelList}" var="artikel">
 	          <div class="well well-sm" style="border-radius: 20px">
 	            <h3>${artikel[1]}</h3>
 	            <p>Artikelnummer: ${artikel[0]}</p>
 	            <p>Gewicht: ${artikel[3]} gram</p>
-	            <h3>
-	              <span class="label label-default"> &#128; ${artikel[2]} </span>
-	            </h3>
-	            <h3>
-	              <span>
+	              <h3><span class="label label-default"> &#128; ${artikel[2]} </span></h3>
+	              <p><span>
 	                <a href="/EAFwebshop/artikel/${artikel[0]}"
-	                  class="artikelBtn label label-success">Artikel bekijken</a> 
+	                  class="btn btn-default">Artikel bekijken</a> 
 	                <c:url
 	                  value="/addToCart" var="addItem">
 	                  <c:param name="artikelnr" value="${artikel[0]}" />
 	                  <c:param name="action" value="newItem" />
 	                </c:url>
-	                <a href="${addItem}" class="artikelBtn label label-default">
+	                <a href="${addItem}" class="btn btn-default">
 	                In winkelmandje <span class="glyphicon glyphicon-shopping-cart"></span>
 	                </a>
-	              </span>
-	            </h3>
+	              </span></p>
 	          </div>
 	        </c:forEach>
 	      </c:if>
 	      
 	      <c:if
-	        test="${not empty requestScope.contentRoot and requestScope.contentRoot eq 'single-artikel'}">
+	        test="${not empty contentRoot and contentRoot eq 'single-artikel'}">
 	        <div class="info">
-	          <h1>${requestScope.artikelProps[2]}
+	          <h1>${artikelProps[2]}
 	            <span style="float: right" class="label label label-success">
-	            &#128; ${requestScope.artikelProps[4]}</span>
+	            &#128; ${artikelProps[4]}</span>
 	          </h1>
 	        </div>
 	        <div class="container-fluid info">
@@ -167,7 +167,8 @@
 	      </c:if>
 	      
 	      <c:if
-	        test="${not empty requestScope.contentRoot and requestScope.contentRoot eq 'loginForm'}">
+	        test="${not empty contentRoot and contentRoot eq 'loginForm'}">
+	        <div>
 	        <form class="form-horizontal" method="post"
 	          action="${pageContext.request.contextPath}/profiel">
 	          <div class="form-group">
@@ -185,19 +186,23 @@
 	          </div>
 	          <div class="form-group">
 	            <div class="col-sm-offset-2 col-sm-10">
-	              <button type="submit" class="btn btn-default">Login</button>
+	              <button type="submit" class="btn btn-default">Inloggen</button>
 	            </div>
 	          </div>
 	        </form>
 	        
-	        <c:if test="${not empty requestScope.errMsg}">
-	          <p style="color: red;">${requestScope.errMsg}</p>
+	        <p><a href="${pageContext.request.contextPath}/register">Registreren</a></p>
+	       	<p><a href="#">Ik ben mijn wachtwoord vergeten! (niet geimplemteerd)</a></p>
+	       	
+	        <c:if test="${not empty errMsg}">
+	          <p style="color: red;">${errMsg}</p>  
 	        </c:if>
-	        
+	        </div> 
 	      </c:if>
 	      
+	      
 	      <c:if
-	        test="${not empty requestScope.contentRoot and requestScope.contentRoot eq 'profiel'}">
+	        test="${not empty contentRoot and contentRoot eq 'profiel'}">
 	        <div class="row">
 	          <div class="col-md-4 col-sm-12">
 	            <table class="table table-bordered">
@@ -279,8 +284,9 @@
 	      </c:if>
 	      
 	      <c:if
-	        test="${not empty requestScope.contentRoot and requestScope.contentRoot eq 'order'}">
+	        test="${not empty contentRoot and contentRoot eq 'order'}">
 	        <div>
+	        	<div class="table-responsive">
 	          <table class="table table-bordered">
 	            <tr>
 	              <td colspan="9">Order nr: ${bestelnr}</td>
@@ -310,10 +316,12 @@
 	              </tr>
 	            </c:forEach>
 	          </table>
+	          </div>
+	          
 	          <table class="table table-bordered">
 	            <tr>
 	              <td>Aantal Artikelen:</td>
-	              <td>${requestScope.costSpecificationList.get(0)}</td>
+	              <td>${costSpecificationList.get(0)}</td>
 	            </tr>
 	            <tr>
 	              <td>Totaal bedrag ex BTW:</td>
@@ -356,12 +364,12 @@
 	      </c:if>
 	      
 	      <c:if
-	        test="${not empty requestScope.contentRoot and requestScope.contentRoot eq 'newOrder'}">
+	        test="${not empty contentRoot and contentRoot eq 'newOrder'}">
 	        <c:if
 	          test="${empty orderArtikelDetailList and empty totalOrderSpecification}">
 	          <c:redirect url="/newOrder" />
 	        </c:if>
-	        <div class="col-sm-12">
+	        <div class="table-responsive">
 	          <table class="table table-bordered">
 	            <tr
 	              style="background-color: #5cb85c; font-size: 16px; color: white;">
@@ -383,10 +391,10 @@
 	              <tr>
 	                <td>${artikelItem[0]}</td>
 	                <td>${artikelItem[1]}</td>
-	                <td>${artikelItem[2]}stuks</td>
+	                <td>${artikelItem[2]} stuks</td>
 	                <td>&#128; ${artikelItem[3]}</td>
-	                <td>${artikelItem[4]}gram</td>
-	                <td>${artikelItem[5]}kg</td>
+	                <td>${artikelItem[4]} gram</td>
+	                <td>${artikelItem[5]} kg</td>
 	                <td>&#128; ${artikelItem[6]}</td>
 	                <td>&#128; ${artikelItem[7]}</td>
 	                <td>&#128; ${artikelItem[8]}</td>
@@ -395,7 +403,7 @@
 	            </c:forEach>
 	          </table>
 	        </div>
-	        <div class="col-sm-12">
+	        <div class="table-responsive">
 	          <table class="table table-bordered">
 	            <tr
 	              style="background-color: #5cb85c; font-size: 16px; color: white;">
@@ -412,11 +420,11 @@
 	              <th>Totaalbedrag inc. Verzendkosten</th>
 	            </tr>
 	            <tr>
-	              <td>${totalOrderSpecification[0]}artikelen</td>
+	              <td>${totalOrderSpecification[0]} artikelen</td>
 	              <td>&#128; ${totalOrderSpecification[1]}</td>
 	              <td>&#128; ${totalOrderSpecification[2]}</td>
 	              <td>&#128; ${totalOrderSpecification[3]}</td>
-	              <td>${totalOrderSpecification[4]}kg</td>
+	              <td>${totalOrderSpecification[4]} kg</td>
 	              <td>${totalOrderSpecification[5]}</td>
 	              <td>&#128; ${totalOrderSpecification[6]}</td>
 	              <td><b style="font-size: 16px;">&#128;
@@ -425,14 +433,14 @@
 	            </tr>
 	          </table>
 	        </div>
-	        <div class="col-sm-12">
+	        <div class="table-responsive">
 	          <table class="table table-bordered">
 	            <tr
 	              style="background-color: #5cb85c; font-size: 16px; color: white;">
 	              <td colspan="5">Klant- en adresgegevens</td>
 	            </tr>
 	            <tr>
-	              <th>Klantnr</th>
+	              <th>Nr</th>
 	              <th>Naam</th>
 	              <th>Adres</th>
 	              <th>Postcode</th>
@@ -440,8 +448,8 @@
 	            </tr>
 	            <tr>
 	              <td>${profielDataList.get(0)}</td>
-	              <td>${profielDataList.get(2)}${profielDataList.get(3)}</td>
-	              <td>${profielDataList.get(4)}${profielDataList.get(5)}</td>
+	              <td>${profielDataList.get(2)} ${profielDataList.get(3)}</td>
+	              <td>${profielDataList.get(4)} ${profielDataList.get(5)}</td>
 	              <td>${profielDataList.get(6)}</td>
 	              <td>${profielDataList.get(7)}</td>
 	            </tr>
@@ -481,6 +489,7 @@
 	            </li>
 	          </ul>
 	        </div>
+	        
 	        <div class="col-sm-12">
 	          <form class="form-horizontal" method="post"
 	            action="${pageContext.request.contextPath}/processOrder">
@@ -488,21 +497,21 @@
 	              <input type="checkbox" style="transform: scale(1.3, 1.3);"
 	                id="voorwaarden" name="voorwaarden" required /><span
 	                style="font-size: 16px; margin-left: 6px;">Ik ben op de
-	              hoogte van de gestelde <a href="#">Servicevoorwaarden</a>
+	              hoogte van de gestelde <a href="About.html">Servicevoorwaarden</a>
 	              </span>
 	            </p>
 	            <p>
 	              <input type="submit" style="font-size: 18px;"
-	                class="btn btn-success" value="Bevestig mijn bestelling" />
+	                class="btn btn-success" value="Bevestig mijn bestelling" ${disabledButton} />
 	            </p>
 	          </form>
 	        </div>
 	      </c:if>
 	      
 	      <c:if
-	        test="${not empty requestScope.contentRoot and requestScope.contentRoot eq 'orderProcessed'}">
+	        test="${not empty contentRoot and contentRoot eq 'orderProcessed'}">
 	        <c:if
-	          test="${not empty requestScope.success and requestScope.success eq true }">
+	          test="${not empty success and success eq true }">
 	          <div class="col-sm-12">
 	            <p style="font-size: 30px; color: #5cb85c;">Bedankt voor uw
 	              bestelling!
@@ -527,7 +536,7 @@
 	      </c:if>
 	      
 	      <c:if
-	        test="${not empty requestScope.contentRoot and requestScope.contentRoot eq 'contact'}">
+	        test="${not empty contentRoot and contentRoot eq 'contact'}">
 	        <form class="form-horizontal" method="post"
 	          action="${pageContext.request.contextPath}/contact">
 	          <div class="form-group">
@@ -573,79 +582,150 @@
 	          </div>
 	        </form>
 	        
-	        <c:if test="${not empty requestScope.contactformErrMsg}">
-	          <p style="color: red;">${requestScope.contactformErrMsg}</p>
+	        <c:if test="${not empty contactformErrMsg}">
+	          <p style="color: red;">${contactformErrMsg}</p>
 	        </c:if>
 	        
-	        <c:if test="${not empty requestScope.confirmationNotAllowed}">
-	          <p style="color: red;">${requestScope.confirmationNotAllowed}</p>
+	        <c:if test="${not empty confirmationNotAllowed}">
+	          <p style="color: red;">${confirmationNotAllowed}</p>
 	        </c:if>
 	        
 	      </c:if>
 	      
 	      <c:if
-	        test="${not empty requestScope.contentRoot and requestScope.contentRoot eq 'contactConfirmation' and not empty requestScope.confirmMsg}">
+	        test="${not empty contentRoot and contentRoot eq 'contactConfirmation' and not empty confirmMsg}">
 	        <p style="font-size: 30px; color: #5cb85c;">Bedankt voor uw
 	          vraag!
 	        </p>
-	        <p>${requestScope.confirmMsg}</p>
+	        <p>${confirmMsg}</p>
 	      </c:if>
-	    </div>
-	    <div id="basket" class="col-md-4">
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>nr.</th>
-            <th>artikel</th>
-            <th>gewicht</th>
-            <th>btw</th>
-            <th>artikelprijs</th>
-            <th colspan="3">aantal</th>
-            <th colspan="2">bedrag</th>
-          </tr>
-        </thead>
-        <tbody>    
-          <c:if test="${not empty sessionScope.cartItemList}">
-            <c:forEach items="${sessionScope.cartItemList}" var="item">
-              <c:url value="/addToCart" var="deleteFromCart">
-                <c:param name="artikelnr" value="${item[0]}" />
-                <c:param name="action" value="deleteFromCart" />
-              </c:url>
-              <tr>
-                <td>${item[0]}</td>
-                <td>${item[1]}</td>
-                <td>${item[2]} gram</td>
-                <td>${item[3]}%</td>
-                <td>&#128; ${item[4]}</td>
-                <c:url value="/addToCart" var="decr">
-                  <c:param name="artikelnr" value="${item[0]}" />
-                  <c:param name="action" value="decrease" />
-                </c:url>
-                <c:url value="/addToCart" var="incr">
-                  <c:param name="artikelnr" value="${item[0]}" />
-                  <c:param name="action" value="increase" />
-                </c:url>
-                <td><a class="sign-plus" href="${incr}">+</a></td>
-                <td>${item[5]}</td>
-                <td><a class="sign-minus" href="${decr}">-</a></td>
-                <td>&#128; ${item[6]}</td>
-                <td><a href="${deleteFromCart}"
-                  style="text-decoration: none;"> <span class="glyphicon glyphicon-trash"></span> </a></td>
-              </tr>
-            </c:forEach>
-          </c:if>     
-          <c:if test="${itemCount eq '0'}">
-            <tr>
-              <td colspan="7">Het winkelmandje is leeg.</td>
-            </tr>
-          </c:if>   
-          <tr>
-            <td colspan="7">
-              <h4>totaal: &#128; ${sessionScope.totaal}</h4>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+	      
+	      <c:if test="${not empty contentRoot and contentRoot eq 'registrationForm'}">
+				   <form method="post" action="${pageContext.request.contextPath}/register">
+				   <div class="row">
+				      <div class="form-group col-sm-12 col-md-12">
+				         <label for="email">Gebruikersnaam/Email:</label>
+				         <input type="email" name="email" class="form-control" id="email" required>
+				      </div>
+				      <div class="form-group col-sm-12 col-md-6">
+				         <label for="pwd">Wachtwoord:</label>
+				         <input type="password" name="pwd" class="form-control" id="pwd" maxlength="64" required>
+				      </div>
+				      <div class="form-group col-sm-12 col-md-6">
+				         <label for="pwdConfirm">Bevestig Wachtwoord:</label>
+				         <input type="password" name="pwdConfirm" class="form-control" id="pwdConfirm" maxlength="64" required>
+				      </div>
+				      <div class="form-group col-sm-12 col-md-6">
+				         <label for="fname">Voornaam:</label>
+				         <input type="text" name="voornaam" class="form-control" id="fname"  maxlength="30" required>
+				      </div>
+				      <div class="form-group col-sm-12 col-md-6">
+				         <label for="lname">Achternaam:</label>
+				         <input type="text" name="achternaam" class="form-control" id="lname" maxlength="30" required>
+				      </div>
+				      <div class="form-group col-sm-12">
+				         <label for="gender">Geslacht:</label><br>
+				         <input style="margin-right:12px;" type="radio" name="gender" value="M">Man<br>
+				         <input style="margin-right:12px;"type="radio" name="gender" value="V">Vrouw<br>
+				         <input style="margin-right:12px;"type="radio" name="gender" value="NVT">N.V.T
+				      </div>
+				      <div class="form-group col-sm-12 col-md-9">
+				         <label for="straat">Straatnaam:</label>
+				         <input type="text" name="straat" class="form-control" id="straat" maxlength="30" required>
+				      </div>
+				      <div class="form-group col-sm-12 col-md-3">
+				      	<label for="huisnr">Huisnummer:</label>
+				        <input type="text" name="huisnr" class="form-control" id="huisnr" minlength="1" maxlength="4" required>
+				      </div>
+				      <div class="form-group col-sm-12 col-md-6">
+				         <label for="pc">Postcode:</label>
+				         <input type="text" name="pc" class="form-control" id="pc" minlength="6" maxlength="6" required>
+				      </div>
+				      <div class="form-group col-sm-12 col-md-6">
+				         <label for="wp">Woonplaats:</label>
+				         <input type="text" name="wp" class="form-control" id="wp" minlength="2" maxlength="30" required>
+				      </div>
+				      <div class="form-group col-sm-12">
+				      	<button type="submit" class="btn btn-default">Registreer</button>
+				      </div>
+				     </div>
+		   </form>
+		   <c:if test="${not empty regErrMsg}">
+		      <p style="color:red;">${regErrMsg}</p>
+		   </c:if><br>
+		   <p>LET OP!: deze functie is gemaakt voor testdoeleinden, U zult geen bevestigings-email ontvangen.</p>
+		   <c:if test="${not empty registrationErrMsg}">
+		   	<p style="color:red;">${registrationErrMsg}</p>
+		   </c:if>
+			</c:if>
+			
+			<c:if test="${not empty contentRoot and contentRoot eq 'registrationConfirmed'}">
+				<p style="font-size: 30px; color: #5cb85c;">Bedankt voor uw
+	          registratie!
+	        </p>
+	        <p>Bedankt voor uw registratie!, klik <a href="${pageContext.request.contextPath}/profiel">hier</a> om in te loggen!</p>
+			</c:if> 
+			 
+	   </div>
+	   
+	    
+	    <div id="basket" class="col-md-4 hidden-sm hidden-xs">
+		    <div class="table-responsive">
+		      <table class="table table-bordered">
+		        <thead>
+		          <tr>
+		            <th>nr.</th>
+		            <th>product-naam</th>
+		            <th>gewicht</th>
+		            <th>btw</th>
+		            <th>prijs</th>
+		            <th colspan="3">aantal</th>
+		            <th colspan="2">bedrag</th>
+		          </tr>
+		        </thead>
+		        <tbody>    
+		          <c:if test="${not empty sessionScope.cartItemList}">
+		            <c:forEach items="${sessionScope.cartItemList}" var="item">
+		              <c:url value="/addToCart" var="deleteFromCart">
+		                <c:param name="artikelnr" value="${item[0]}" />
+		                <c:param name="action" value="deleteFromCart" />
+		              </c:url>
+		              <tr>
+		                <td>${item[0]}</td>
+		                <td>${item[1]}</td>
+		                <td>${item[2]} gram</td>
+		                <td>${item[3]}%</td>
+		                <td>&#128; ${item[4]}</td>
+		                <c:url value="/addToCart" var="decr">
+		                  <c:param name="artikelnr" value="${item[0]}" />
+		                  <c:param name="action" value="decrease" />
+		                </c:url>
+		                <c:url value="/addToCart" var="incr">
+		                  <c:param name="artikelnr" value="${item[0]}" />
+		                  <c:param name="action" value="increase" />
+		                </c:url>
+		                <td><a href="${decr}"><span class="glyphicon glyphicon-minus"></span></a></td>
+		                <td>${item[5]}</td>
+		                <td><a href="${incr}"><span class="glyphicon glyphicon-plus"></span></a></td>
+		                <td>&#128; ${item[6]}</td>
+		                <td><a href="${deleteFromCart}"
+		                  style="text-decoration: none;vertical-align:middle;"> <span class="glyphicon glyphicon-trash"></span> </a></td>
+		              </tr>
+		            </c:forEach>
+		          </c:if>     
+		          <c:if test="${itemCount eq '0'}">
+		            <tr>
+		              <td colspan="10">Het winkelmandje is leeg.</td>
+		            </tr>
+		          </c:if>   
+		          <tr>
+		            <td colspan="10">
+		              <h4>totaal: &#128; ${sessionScope.totaal}</h4>
+		            </td>
+		          </tr>
+		        </tbody>
+		      </table>
+      	</div>
       <c:url value="/addToCart" var="emptyCart">
         <c:param name="action" value="emptyCart" />
       </c:url>   
@@ -658,8 +738,34 @@
           <a href="${pageContext.request.contextPath}/newOrder"
             class="btn btn-success">Besteloverzicht</a>
         </p>
-      </c:if>    
+      </c:if>
     </div>
+    
+    <div class="modal fade" id="basketModal" role="dialog" aria-labelledby="basketModalLabel">
+   <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="basketModalLabel">Winkelmandje</h4>
+         </div>
+         <div class="modal-body">
+            here goes contents from basket...
+         </div>
+         <div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+      </div>
+   </div>
+</div>
+    
     </div>
+    
+    <script>
+			$("#shoppingBasket").click(function() {
+			$("#basketModal .modal-body").html($("#basket").html());
+			$("#basketModal").modal("show");
+		});
+	</script>
+    
   </body>
 </html>

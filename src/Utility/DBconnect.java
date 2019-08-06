@@ -1,19 +1,29 @@
 package Utility;
 import java.sql.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 public class DBconnect {
 	
 	
-	public static Connection getConnection() throws SQLException, ClassNotFoundException {
+	public static Connection getConnection(HttpServletRequest req) throws SQLException, ClassNotFoundException {
+		
+		String[]credentials = {"guest","guest"};
+
 		Class.forName("com.mysql.jdbc.Driver");
 		String url = "jdbc:mysql://localhost:3306/webshop?serverTimezone=UTC";
-		
-		//never hardcode passwords into java, you should create a db account for each user, with its given password for his account
-		String username = "root";
-		String password = "gtagpw7*////";
-		
-		
-		Connection conn = DriverManager.getConnection(url, username, password);
+			
+		//check is there is a session
+		if (req.getSession() != null) {
+			HttpSession session = req.getSession();
+			//check is session attribute 'credentials' is present
+			if (session.getAttribute("credentials")!= null) {
+				credentials = (String[]) session.getAttribute("credentials");
+			}
+		}
+	
+		//return connection object, along with credentials, either user specific, or guest
+		Connection conn = DriverManager.getConnection(url, credentials[0], credentials[1]);
 		return conn;
-	}
+		}
 }

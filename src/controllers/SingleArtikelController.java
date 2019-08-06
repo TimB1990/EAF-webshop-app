@@ -15,6 +15,9 @@ import model.ProceduresArtikel;
 @WebServlet(name = "/artikel", urlPatterns = { "/artikel/*" })
 public class SingleArtikelController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	
+	String message;
+	String contentRoot;
        
 
     public SingleArtikelController() {
@@ -23,35 +26,50 @@ public class SingleArtikelController extends HttpServlet {
 
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		message = "ok";
 		String artikelnr = "";
-		String message = "ok";
 		
 		try {
+			//get the request uri
 			String uri = request.getRequestURI();
 			System.out.println("uri: " + uri);
+			
+			//define regex pattern to filter out last digits from URI respresenting an artikelnr.
 			Pattern pattern = Pattern.compile("[0-9]+$");
 			Matcher matcher = pattern.matcher(uri);
+			
+			//if last digits that should represent the artikelnr can be found
 			if(matcher.find()) {
 				artikelnr = matcher.group();
-				String[]artikelProps = ProceduresArtikel.read(Integer.parseInt(artikelnr));
+				
+				//create string[] object containing the properties of that specific artikel
+				String[]artikelProps = ProceduresArtikel.read(request,Integer.parseInt(artikelnr));
+				
+				//set artikel properties as an attribute for the request scope. 
 				request.setAttribute("artikelProps", artikelProps);
 				
 			}		
 		} catch (ClassNotFoundException | SQLException e) {
+			
+			//In case of an exception, show message and display error.
 			message = "inladen data single-artikel mislukt..." + e;			
 		}
 		
-		String contentRoot = "single-artikel";
+		//set content indicator to be used for index.jsp to display right content
+		contentRoot = "single-artikel";
+		
+		//set message and content as attributes for request-scope.
 		request.setAttribute("message", message);
 		request.setAttribute("contentRoot", contentRoot);
 		
+		//forward request to index.jsp so that request scope can be accessed from within index.jsp.
 		RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
 		rd.forward(request, response);
 	}
 
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

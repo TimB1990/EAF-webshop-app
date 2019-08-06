@@ -22,7 +22,6 @@ public class ArtikelenController extends HttpServlet {
 
     public ArtikelenController() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 
@@ -41,8 +40,8 @@ public class ArtikelenController extends HttpServlet {
 			Matcher matcher = pattern.matcher(uri);
 			if(matcher.find()) {
 				categoryName = matcher.group();
-				String[]categorieProps = ProceduresCategorie.read(categoryName);
-				List<String[]>artikelList = ProceduresArtikel.list(categoryName);
+				String[]categorieProps = ProceduresCategorie.read(request,categoryName);
+				List<String[]>artikelList = ProceduresArtikel.list(request, categoryName);
 				request.setAttribute("categorieProps", categorieProps);
 				request.setAttribute("artikelList", artikelList);
 				
