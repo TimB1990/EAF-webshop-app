@@ -530,6 +530,7 @@
 	              dan verzoeken wij U graag contact op te nemen met onze
 	              klantenservice via het <a href="#">Contactformulier</a>. Wij
 	              danken U voor uw aankoop!
+	              
 	            </p>
 	          </div>
 	        </c:if>

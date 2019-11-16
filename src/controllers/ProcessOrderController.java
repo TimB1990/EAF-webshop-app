@@ -73,6 +73,13 @@ public class ProcessOrderController extends HttpServlet {
 			//set success as request attribute
 			request.setAttribute("success", success);
 			
+			//get attribute 'loggedIn' from sessionscope and logout user
+			String loggedIn = (String) request.getSession().getAttribute("loggedIn");
+			if(loggedIn.contentEquals("true")) {
+				loggedIn = "false";
+				request.getSession().setAttribute("loggedIn", loggedIn);
+			}
+			
 			//define content as 'orderProcessed'. 
 			contentRoot = "orderProcessed";	
 		}

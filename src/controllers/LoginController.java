@@ -49,6 +49,7 @@ public class LoginController extends HttpServlet {
 			//otherwise set content to 'profiel' and set message to 'login succesvol'
 			contentRoot = "profiel";
 			message = "login succesvol";
+
 		}
 
 		//check if parameter 'logout' is not null and parameter 'logout' has value "true'.
@@ -106,6 +107,7 @@ public class LoginController extends HttpServlet {
 				loginSession.setAttribute("credentials",credentials);
 				loginSession.setAttribute("profielDataList", profielDataList);
 				String klantnr = profielDataList.get(0);
+				
 				List<String[]> customerOrderList = ProceduresOrders.listCustomerOrders(request,klantnr);
 				loginSession.setAttribute("customerOrderList", customerOrderList);
 			}
