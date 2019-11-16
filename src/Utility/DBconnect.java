@@ -11,7 +11,7 @@ public class DBconnect {
 		String[]credentials = {"guest","guest"};
 
 		Class.forName("com.mysql.jdbc.Driver");
-		String url = "jdbc:mysql://localhost:3306/webshop?serverTimezone=UTC";
+		String url = "jdbc:mysql://localhost:3306/eafwebshop?serverTimezone=UTC";
 			
 		//check is there is a session
 		if (req.getSession() != null) {

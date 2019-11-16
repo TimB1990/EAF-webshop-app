@@ -108,7 +108,7 @@
 		          <p style="font-size:18px;">${categorieProps[1]}</p>
 	          </div>
 	          <div style="float:right;" class="col-sm-12 col-xs-12 col-md-3">
-	          	<img style="border-radius:20px;" src="../images/${categorieProps[2]}" alt="${categorieProps[2]}" width="256", height="256">
+	          	<img style="border-radius:20px;" src="../images/${categorieProps[2]}" alt="${categorieProps[2]}" width="256" height="256">
 	          </div>
 	        </div>
 	        <c:forEach items="${artikelList}" var="artikel">
@@ -635,15 +635,15 @@
 				      </div>
 				      <div class="form-group col-sm-12 col-md-3">
 				      	<label for="huisnr">Huisnummer:</label>
-				        <input type="text" name="huisnr" class="form-control" id="huisnr" minlength="1" maxlength="4" required>
+				        <input type="text" name="huisnr" class="form-control" id="huisnr" maxlength="4" required>
 				      </div>
 				      <div class="form-group col-sm-12 col-md-6">
 				         <label for="pc">Postcode:</label>
-				         <input type="text" name="pc" class="form-control" id="pc" minlength="6" maxlength="6" required>
+				         <input type="text" name="pc" class="form-control" id="pc" maxlength="6" required>
 				      </div>
 				      <div class="form-group col-sm-12 col-md-6">
 				         <label for="wp">Woonplaats:</label>
-				         <input type="text" name="wp" class="form-control" id="wp" minlength="2" maxlength="30" required>
+				         <input type="text" name="wp" class="form-control" id="wp" maxlength="30" required>
 				      </div>
 				      <div class="form-group col-sm-12">
 				      	<button type="submit" class="btn btn-default">Registreer</button>
